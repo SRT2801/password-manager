@@ -5,6 +5,7 @@ import { LogoutUserUseCase } from 'src/application/use-cases/logout-user.usecase
 import { RegisterUserDto } from './dtos/register-user.dto';
 import { LoginUserDto } from './dtos/login-user.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { ValidationMessages } from '../shared/constants/validation-messages.constants';
 
 @Controller('auth')
 export class AuthController {
@@ -29,7 +30,7 @@ export class AuthController {
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
-      message: 'Usuario registrado correctamente',
+      message: ValidationMessages.USER_REGISTERED,
     };
   }
 
@@ -46,7 +47,7 @@ export class AuthController {
     if (token) {
       await this.logoutUserUseCase.execute(token);
     }
-    return { message: 'Sesión cerrada correctamente' };
+    return { message: ValidationMessages.SESSION_CLOSED };
   }
 
   private extractTokenFromHeader(request: any): string | undefined {

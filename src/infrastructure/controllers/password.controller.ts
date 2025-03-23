@@ -12,6 +12,7 @@ import { GetPasswordUseCase } from 'src/application/use-cases/get-password.useca
 import { GetAllPasswordsUseCase } from 'src/application/use-cases/get-all-passwords.usecase';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { SavePasswordDto } from './dtos/save-password.dto';
+import { ValidationMessages } from '../shared/constants/validation-messages.constants';
 
 @Controller('passwords')
 @UseGuards(JwtAuthGuard)
@@ -37,7 +38,7 @@ export class PasswordController {
     return {
       serviceName: savedPassword.serviceName,
       userName: savedPassword.userName,
-      message: 'Password saved successfully',
+      message: ValidationMessages.PASSWORD_SAVED,
     };
   }
 
@@ -47,13 +48,13 @@ export class PasswordController {
     const password = await this.getPasswordUseCase.execute(serviceName, userId);
 
     if (!password) {
-      return { message: 'Password not found' };
+      return { message: ValidationMessages.PASSWORD_NOT_FOUND };
     }
 
     return {
       serviceName: password.serviceName,
       userName: password.userName,
-      password: password.decryptedPassword, 
+      password: password.decryptedPassword,
     };
   }
 
@@ -65,7 +66,7 @@ export class PasswordController {
     return passwords.map((password) => ({
       serviceName: password.serviceName,
       userName: password.userName,
-      password: password.decryptedPassword, 
+      password: password.decryptedPassword,
     }));
   }
 }

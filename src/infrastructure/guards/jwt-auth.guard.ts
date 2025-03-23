@@ -11,10 +11,11 @@ import {
   InvalidatedTokenRepository,
   INVALIDATED_TOKEN_REPOSITORY,
 } from 'src/domain/repositories/invalidated-token.repository';
+import { ValidationMessages } from '../shared/constants/validation-messages.constants';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
-  private readonly JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+  private readonly JWT_SECRET = process.env.JWT_SECRET;
 
   constructor(
     @Inject(INVALIDATED_TOKEN_REPOSITORY)
@@ -31,7 +32,7 @@ export class JwtAuthGuard implements CanActivate {
 
     const isInvalidated = await this.invalidatedTokenRepository.exists(token);
     if (isInvalidated) {
-      throw new UnauthorizedException('La sesión ha expirado o se ha cerrado');
+      throw new UnauthorizedException(ValidationMessages.SESSION_EXPIRED);
     }
 
     try {
