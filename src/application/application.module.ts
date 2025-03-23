@@ -12,30 +12,40 @@ import { PASSWORD_REPOSITORY } from 'src/domain/repositories/password.repository
 import { USER_REPOSITORY } from 'src/domain/repositories/user.repository.token';
 import { INVALIDATED_TOKEN_REPOSITORY } from 'src/domain/repositories/invalidated-token.repository';
 import { ConfigService } from '@nestjs/config';
+import { EncryptionService } from 'src/infrastructure/services/encryption/encryption.service';
 
 @Module({
   imports: [PersistenceModule, ServicesModule],
   providers: [
     {
       provide: SavePasswordUseCase,
-      useFactory: (repo, bcrypt: BcryptService) => {
-        return new SavePasswordUseCase(repo, bcrypt.hash.bind(bcrypt));
+      useFactory: (repo, encryptionService: EncryptionService) => {
+        return new SavePasswordUseCase(
+          repo,
+          encryptionService.encrypt.bind(encryptionService),
+        );
       },
-      inject: [PASSWORD_REPOSITORY, BcryptService],
+      inject: [PASSWORD_REPOSITORY, EncryptionService],
     },
     {
       provide: GetPasswordUseCase,
-      useFactory: (repo) => {
-        return new GetPasswordUseCase(repo);
+      useFactory: (repo, encryptionService: EncryptionService) => {
+        return new GetPasswordUseCase(
+          repo,
+          encryptionService.decrypt.bind(encryptionService),
+        );
       },
-      inject: [PASSWORD_REPOSITORY],
+      inject: [PASSWORD_REPOSITORY, EncryptionService],
     },
     {
       provide: GetAllPasswordsUseCase,
-      useFactory: (repo) => {
-        return new GetAllPasswordsUseCase(repo);
+      useFactory: (repo, encryptionService: EncryptionService) => {
+        return new GetAllPasswordsUseCase(
+          repo,
+          encryptionService.decrypt.bind(encryptionService),
+        );
       },
-      inject: [PASSWORD_REPOSITORY],
+      inject: [PASSWORD_REPOSITORY, EncryptionService],
     },
     {
       provide: RegisterUserUseCase,

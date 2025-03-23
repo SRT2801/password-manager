@@ -4,6 +4,7 @@ export class Password {
   userName: string;
   encryptedPassword: string;
   userId: number;
+  decryptedPassword?: string; 
 
   constructor(
     serviceName: string,

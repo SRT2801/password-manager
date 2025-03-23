@@ -53,6 +53,7 @@ export class PasswordController {
     return {
       serviceName: password.serviceName,
       userName: password.userName,
+      password: password.decryptedPassword, 
     };
   }
 
@@ -64,6 +65,7 @@ export class PasswordController {
     return passwords.map((password) => ({
       serviceName: password.serviceName,
       userName: password.userName,
+      password: password.decryptedPassword, 
     }));
   }
 }

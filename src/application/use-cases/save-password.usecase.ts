@@ -4,7 +4,7 @@ import { PasswordRepository } from 'src/domain/repositories/password.repository.
 export class SavePasswordUseCase {
   constructor(
     private readonly passwordRepository: PasswordRepository,
-    private readonly hashFunction: (password: string) => Promise<string>,
+    private readonly encryptFunction: (password: string) => string,
   ) {}
 
   async execute(
@@ -13,7 +13,8 @@ export class SavePasswordUseCase {
     userName: string,
     plainPassword: string,
   ): Promise<Password> {
-    const encryptedPassword = await this.hashFunction(plainPassword);
+
+    const encryptedPassword = this.encryptFunction(plainPassword);
 
     const password = new Password(
       serviceName,
