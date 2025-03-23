@@ -10,7 +10,7 @@ export class LogoutUserUseCase {
   async execute(token: string): Promise<void> {
     const decoded = jwt.decode(token) as { exp: number };
     if (!decoded || !decoded.exp) {
-      throw new Error('Formato de token inválido');
+      throw new Error('Invalid token format');
     }
 
     const expiresAt = new Date(decoded.exp * 1000);
