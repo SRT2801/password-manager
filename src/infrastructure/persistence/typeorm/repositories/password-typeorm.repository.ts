@@ -46,12 +46,19 @@ export class PasswordTypeOrmRepository implements PasswordRepository {
 
     if (!passwordTypeORM) return null;
 
-    return new Password(
+    const password = new Password(
       passwordTypeORM.serviceName,
       passwordTypeORM.userName,
       passwordTypeORM.encryptedPassword,
       passwordTypeORM.user.id,
     );
+
+
+    password.id = passwordTypeORM.id;
+    password.createdAt = passwordTypeORM.createdAt;
+    password.updatedAt = passwordTypeORM.updatedAt;
+
+    return password;
   }
 
   async findAllByUserId(userId: number): Promise<Password[]> {
@@ -60,9 +67,62 @@ export class PasswordTypeOrmRepository implements PasswordRepository {
       relations: ['user'],
     });
 
-    return passwordsTypeORM.map(
-      (p) =>
-        new Password(p.serviceName, p.userName, p.encryptedPassword, p.user.id),
+    return passwordsTypeORM.map((p) => {
+      const password = new Password(
+        p.serviceName,
+        p.userName,
+        p.encryptedPassword,
+        p.user.id,
+      );
+
+      password.id = p.id;
+      password.createdAt = p.createdAt;
+      password.updatedAt = p.updatedAt;
+
+      return password;
+    });
+  }
+
+  async findById(id: number, userId: number): Promise<Password | null> {
+    const passwordTypeORM = await this.passwordRepository.findOne({
+      where: {
+        id: id,
+        user: { id: userId },
+      },
+      relations: ['user'],
+    });
+
+    if (!passwordTypeORM) return null;
+
+    const password = new Password(
+      passwordTypeORM.serviceName,
+      passwordTypeORM.userName,
+      passwordTypeORM.encryptedPassword,
+      passwordTypeORM.user.id,
     );
+
+    password.id = passwordTypeORM.id;
+    password.createdAt = passwordTypeORM.createdAt;
+    password.updatedAt = passwordTypeORM.updatedAt;
+
+    return password;
+  }
+
+  async update(password: Password): Promise<void> {
+    const passwordTypeORM = await this.passwordRepository.findOne({
+      where: {
+        id: password.id,
+        user: { id: password.userId },
+      },
+      relations: ['user'],
+    });
+
+    if (passwordTypeORM) {
+      passwordTypeORM.serviceName = password.serviceName;
+      passwordTypeORM.userName = password.userName;
+      passwordTypeORM.encryptedPassword = password.encryptedPassword;
+
+      await this.passwordRepository.save(passwordTypeORM);
+    }
   }
 }

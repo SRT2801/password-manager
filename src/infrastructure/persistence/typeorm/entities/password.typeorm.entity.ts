@@ -4,6 +4,8 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { UserTypeORM } from './user.typeorm.entity';
 
@@ -24,6 +26,12 @@ export class PasswordTypeORM {
   @ManyToOne(() => UserTypeORM, (user) => user.passwords)
   @JoinColumn({ name: 'user_id' })
   user: UserTypeORM;
+
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
 
   // En su lugar, TypeORM generará un userId virtualmente disponible
   userId: number;

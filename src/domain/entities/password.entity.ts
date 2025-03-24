@@ -4,7 +4,9 @@ export class Password {
   userName: string;
   encryptedPassword: string;
   userId: number;
-  decryptedPassword?: string; 
+  decryptedPassword?: string;
+  createdAt: Date;
+  updatedAt: Date;
 
   constructor(
     serviceName: string,
@@ -16,5 +18,7 @@ export class Password {
     this.userName = username;
     this.encryptedPassword = encryptedPassword;
     this.userId = userId;
+    this.createdAt = new Date();
+    this.updatedAt = new Date();
   }
 }

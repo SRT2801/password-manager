@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { SavePasswordUseCase } from './use-cases/save-password.usecase';
 import { GetPasswordUseCase } from './use-cases/get-password.usecase';
 import { GetAllPasswordsUseCase } from './use-cases/get-all-passwords.usecase';
+import { UpdatePasswordUseCase } from './use-cases/update-password.usecase';
 import { RegisterUserUseCase } from './use-cases/register-user.usecase';
 import { LoginUserUseCase } from './use-cases/login-user.usecase';
 import { LogoutUserUseCase } from './use-cases/logout-user.usecase';
@@ -48,6 +49,16 @@ import { EncryptionService } from 'src/infrastructure/services/encryption/encryp
       inject: [PASSWORD_REPOSITORY, EncryptionService],
     },
     {
+      provide: UpdatePasswordUseCase,
+      useFactory: (repo, encryptionService: EncryptionService) => {
+        return new UpdatePasswordUseCase(
+          repo,
+          encryptionService.encrypt.bind(encryptionService),
+        );
+      },
+      inject: [PASSWORD_REPOSITORY, EncryptionService],
+    },
+    {
       provide: RegisterUserUseCase,
       useFactory: (repo, bcrypt: BcryptService) => {
         return new RegisterUserUseCase(repo, bcrypt.hash.bind(bcrypt));
@@ -81,6 +92,7 @@ import { EncryptionService } from 'src/infrastructure/services/encryption/encryp
     SavePasswordUseCase,
     GetPasswordUseCase,
     GetAllPasswordsUseCase,
+    UpdatePasswordUseCase,
     RegisterUserUseCase,
     LoginUserUseCase,
     LogoutUserUseCase,
