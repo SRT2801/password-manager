@@ -14,6 +14,7 @@ import { USER_REPOSITORY } from 'src/domain/repositories/user.repository.token';
 import { INVALIDATED_TOKEN_REPOSITORY } from 'src/domain/repositories/invalidated-token.repository';
 import { ConfigService } from '@nestjs/config';
 import { EncryptionService } from 'src/infrastructure/services/encryption/encryption.service';
+import { MailService } from 'src/infrastructure/services/mail/mail.service';
 
 @Module({
   imports: [PersistenceModule, ServicesModule],
@@ -60,10 +61,14 @@ import { EncryptionService } from 'src/infrastructure/services/encryption/encryp
     },
     {
       provide: RegisterUserUseCase,
-      useFactory: (repo, bcrypt: BcryptService) => {
-        return new RegisterUserUseCase(repo, bcrypt.hash.bind(bcrypt));
+      useFactory: (repo, bcrypt: BcryptService, mailService: MailService) => {
+        return new RegisterUserUseCase(
+          repo,
+          bcrypt.hash.bind(bcrypt),
+          mailService.sendWelcomeEmail.bind(mailService),
+        );
       },
-      inject: [USER_REPOSITORY, BcryptService],
+      inject: [USER_REPOSITORY, BcryptService, MailService],
     },
     {
       provide: LoginUserUseCase,

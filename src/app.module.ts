@@ -12,6 +12,7 @@ import { InvalidatedTokenTypeORM } from './infrastructure/persistence/typeorm/en
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: '.env',
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
